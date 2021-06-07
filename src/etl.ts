@@ -15,6 +15,7 @@ dayjs.extend(timezone);
 
 const timeZone = 'America/New_York';
 const etlDataGenerator = 'http://etl-data-gen:3000/shifts';
+const tz = (dateLike: number) => dayjs.tz(dateLike * 1000, timeZone).format();
 
 export const extractTransformLoad = async (body: EtlRequest): Promise<boolean> => {
   try {
@@ -53,9 +54,9 @@ export const extractTransformLoad = async (body: EtlRequest): Promise<boolean> =
           shift_date,
           sheet_id,
           ...strippedBreak,
-          start: dayjs.tz(breakStart * 1000, timeZone).format(),
-          finish: dayjs.tz(breakFinish * 1000, timeZone).format(),
-          updated_at: dayjs.tz(breakUpdated * 1000, timeZone).format(),
+          start: tz(breakStart),
+          finish: tz(breakFinish),
+          updated_at: tz(breakUpdated),
         });
       for (const { id: allowance_id, updated_at: allowanceUpdated, ...strippedAllowance } of allowances || [])
         await AllowanceModel.create({
@@ -64,7 +65,7 @@ export const extractTransformLoad = async (body: EtlRequest): Promise<boolean> =
           shift_date,
           sheet_id,
           ...strippedAllowance,
-          updated_at: dayjs.tz(allowanceUpdated * 1000, timeZone).format(),
+          updated_at: tz(allowanceUpdated),
         });
       for (const { from, to, ...stripedAwardInterpretation } of award_interpretations || [])
         await AwardInterpretationModel.create({
@@ -72,18 +73,18 @@ export const extractTransformLoad = async (body: EtlRequest): Promise<boolean> =
           shift_date,
           sheet_id,
           ...stripedAwardInterpretation,
-          from: dayjs.tz(from * 1000, timeZone).format(),
-          to: dayjs.tz(to * 1000, timeZone).format(),
+          from: tz(from),
+          to: tz(to),
         });
       await ShiftModel.create({
         shift_id,
         date: shift_date,
         timesheet_id: sheet_id,
-        start: dayjs.tz(start * 1000, timeZone).format(),
-        finish: dayjs.tz(finish * 1000, timeZone).format(),
+        start: tz(start),
+        finish: tz(finish),
         ...strippedShift,
-        ...(approved_at && { approved_at: dayjs.tz(approved_at * 1000, timeZone).format() }),
-        last_costed_at: dayjs.tz(last_costed_at * 1000, timeZone).format(),
+        ...(approved_at && { approved_at: tz(approved_at) }),
+        last_costed_at: tz(last_costed_at),
       });
     }
 
