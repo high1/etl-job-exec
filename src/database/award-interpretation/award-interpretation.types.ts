@@ -1,15 +1,5 @@
 import { Document, Model } from 'mongoose';
-
-export type AwardInterpretation = {
-  units: number;
-  date: string;
-  export_name: string;
-  secondary_export_name?: string;
-  ordinary_hours?: boolean;
-  cost: number;
-  from?: number;
-  to?: number;
-};
+import type { AwardInterpretation } from 'types';
 
 export interface AwardInterpretationDocument extends AwardInterpretation, Document {}
 
